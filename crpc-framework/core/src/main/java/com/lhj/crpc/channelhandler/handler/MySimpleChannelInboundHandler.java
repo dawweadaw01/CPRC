@@ -84,7 +84,7 @@ public class MySimpleChannelInboundHandler extends SimpleChannelInboundHandler<C
             // 重新进行负载均衡
             CrpcRequest crpcRequest = CrpcBootstrap.REQUEST_THREAD_LOCAL.get();
             loadBalancer.reLoadBalance(crpcRequest.getRequestPayload().getInterfaceName()
-                    , CrpcBootstrap.CHANNEL_CACHE.keySet().stream().toList());
+                    , CrpcBootstrap.getInstance().getConfiguration().getLoadBalancer().getAddresses());
 
             throw new ResponseException(code, RespCode.BECOLSING.getDesc());
         }
