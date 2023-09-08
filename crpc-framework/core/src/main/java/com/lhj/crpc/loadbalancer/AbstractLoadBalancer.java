@@ -54,6 +54,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
      */
     protected abstract Selector getSelector(List<InetSocketAddress> serviceList);
 
+    @Override
     public List<InetSocketAddress> getAddresses(){
         return serviceList;
     }

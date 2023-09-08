@@ -37,6 +37,7 @@ public class TokenBuketRateLimiter implements RateLimiter {
      * 判断请求是否可以放行
      * @return true 放行  false  拦截
      */
+    @Override
     public synchronized boolean allowRequest() {
         // 1、给令牌桶添加令牌
         // 计算从现在到上一次的时间间隔需要添加的令牌数

@@ -121,7 +121,9 @@ public class SpiHandler {
             List<String> implNames = new ArrayList<>();
             while (true){
                 String line = bufferedReader.readLine();
-                if (line == null || line.isEmpty()) break;
+                if (line == null || line.isEmpty()) {
+                    break;
+                }
                 implNames.add(line);
             }
             return implNames;
