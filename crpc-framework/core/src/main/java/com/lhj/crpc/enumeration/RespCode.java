@@ -1,5 +1,7 @@
 package com.lhj.crpc.enumeration;
 
+import lombok.Getter;
+
 /**
  * 响应码需要做统一的处理
  * 成功码  20(方法成功调用)   21（心跳成功反回）
@@ -12,8 +14,9 @@ package com.lhj.crpc.enumeration;
  * @author banyan
  * @createTime 2023-07-22
  */
+@Getter
 public enum RespCode {
-    
+    // 20-29 成功
     SUCCESS((byte) 20,"成功"),
     SUCCESS_HEART_BEAT((byte) 21,"心跳检测成功返回"),
     RATE_LIMIT((byte)31,"服务被限流" ),
@@ -21,19 +24,12 @@ public enum RespCode {
     FAIL((byte)50,"调用方法发生异常"),
     BECOLSING((byte)51,"调用方法发生异常");
     
-    private byte code;
-    private String desc;
+    private final byte code;
+    private final String desc;
     
     RespCode(byte code, String desc) {
         this.code = code;
         this.desc = desc;
     }
-    
-    public byte getCode() {
-        return code;
-    }
-    
-    public String getDesc() {
-        return desc;
-    }
+
 }

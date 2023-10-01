@@ -7,7 +7,7 @@ import com.lhj.crpc.channelhandler.handler.MethodCallHandler;
 import com.lhj.crpc.config.Configuration;
 import com.lhj.crpc.config.XmlResolver;
 import com.lhj.crpc.core.HeartbeatDetector;
-import com.lhj.crpc.core.YrpcShutdownHook;
+import com.lhj.crpc.core.CrpcShutdownHook;
 import com.lhj.crpc.discovery.RegistryConfig;
 import com.lhj.crpc.loadbalancer.LoadBalancer;
 import com.lhj.crpc.message.CrpcRequest;
@@ -52,6 +52,8 @@ public class CrpcBootstrap {
     public static final ThreadLocal<CrpcRequest> REQUEST_THREAD_LOCAL = new ThreadLocal<>();
 
     public final static TreeMap<Long, Channel> ANSWER_TIME_CHANNEL_CACHE = new TreeMap<>();
+
+    ConcurrentHashMap<String, TreeMap<Long, Channel>> ANSWER_TIME_CHANNEL_CACHE2 = new ConcurrentHashMap<>(16);
 
     // 全局配置
     public final Configuration configuration;
@@ -191,7 +193,7 @@ public class CrpcBootstrap {
             scan(scanPackage);
         }
         // 注册关闭应用程序的钩子函数
-        Runtime.getRuntime().addShutdownHook(new YrpcShutdownHook());
+        Runtime.getRuntime().addShutdownHook(new CrpcShutdownHook());
 
         // 1、创建eventLoop，老板只负责处理请求，之后会将请求分发至worker
         EventLoopGroup boss = new NioEventLoopGroup(2);
@@ -205,20 +207,18 @@ public class CrpcBootstrap {
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(SocketChannel socketChannel) throws Exception {
+                        protected void initChannel(SocketChannel socketChannel) {
                             // 是核心，我们需要添加很多入站和出站的handler
                             socketChannel.pipeline().addLast(new LoggingHandler())
                                     .addLast(new CrpcRequestDecoder())
                                     // 根据请求进行方法调用
                                     .addLast(new MethodCallHandler())
-                                    .addLast(new CrpcResponseEncoder())
-                            ;
+                                    .addLast(new CrpcResponseEncoder());
                         }
                     });
 
             // 4、绑定端口
             ChannelFuture channelFuture = serverBootstrap.bind(configuration.getPort()).sync();
-
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -308,7 +308,7 @@ public class CrpcBootstrap {
         if (file.isDirectory()) {
             // 找到文件夹的所有的文件
             File[] children = file.listFiles(pathname -> pathname.isDirectory() || pathname.getPath().contains(".class"));
-            if (children == null || children.length == 0) {
+            if (children == null) {
                 return classNames;
             }
             for (File child : children) {
@@ -344,10 +344,10 @@ public class CrpcBootstrap {
     /**
      * ---------------------------服务调用方的相关api---------------------------------
      */
-    public CrpcBootstrap reference(ReferenceConfig<?> reference) {
+    public CrpcBootstrap reference(ReferenceConfig<?> reference, String group) {
 
         // 开启对这个服务的心跳检测
-        HeartbeatDetector.detectHeartbeat(reference.getInterface().getName());
+        HeartbeatDetector.detectHeartbeat(reference.getInterface().getName(), group);
 
         // 在这个方法里我们是否可以拿到相关的配置项-注册中心
         // 配置reference，将来调用get方法时，方便生成代理对象

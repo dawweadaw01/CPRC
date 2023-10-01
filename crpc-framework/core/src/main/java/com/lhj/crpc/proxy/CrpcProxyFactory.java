@@ -4,6 +4,7 @@ package com.lhj.crpc.proxy;
 import com.lhj.crpc.CrpcBootstrap;
 import com.lhj.crpc.ReferenceConfig;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,22 +13,23 @@ import java.util.concurrent.ConcurrentHashMap;
  * @createTime 2023-07-30
  */
 public class CrpcProxyFactory {
-    
-    private static final Map<Class<?>,Object> cache = new ConcurrentHashMap<>(32);
-    
+
+    private static final Map<String,Object> cache = new ConcurrentHashMap<>(32);
+
     public static <T> T getProxy(Class<T> clazz, String group) {
-    
-        Object bean = cache.get(clazz);
-        if(bean != null){
-            return (T)bean;
+
+        String key = clazz.getName() + group;
+        Object bean = cache.get(key);
+        if (bean != null) {
+            return (T) bean;
         }
-    
+
         ReferenceConfig<T> reference = new ReferenceConfig<>();
         reference.setInterface(clazz);
         reference.setGroup(group);
-        CrpcBootstrap.getInstance().reference(reference);
+        CrpcBootstrap.getInstance().reference(reference, group);
         T t = reference.get();
-        cache.put(clazz,t);
+        cache.put(key, t);
         return t;
     }
 }

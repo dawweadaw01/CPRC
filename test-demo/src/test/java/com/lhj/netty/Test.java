@@ -9,9 +9,8 @@ import io.netty.buffer.Unpooled;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
 public class Test {
@@ -77,5 +76,45 @@ public class Test {
         System.out.println(Arrays.toString(bytes1));
         byte[] decompress = gzipCompress.decompress(compress);
         System.out.println(Arrays.toString(decompress));
+    }
+
+    @org.junit.Test
+    public void testTreeMap() {
+
+
+        //按照aaa中的a进行排序
+
+
+    }
+}
+
+
+
+class aaa{
+    private int a;
+    private String string;
+
+    public int getA() {
+        return a;
+    }
+
+    public void setA(int a) {
+        this.a = a;
+    }
+
+    public String getString() {
+        return string;
+    }
+
+    public void setString(String string) {
+        this.string = string;
+    }
+
+    public aaa() {
+    }
+
+    public aaa(int a, String string) {
+        this.a = a;
+        this.string = string;
     }
 }

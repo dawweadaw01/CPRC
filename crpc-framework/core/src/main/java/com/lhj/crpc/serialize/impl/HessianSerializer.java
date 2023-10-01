@@ -8,6 +8,10 @@ import com.lhj.crpc.serialize.Serializer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Queue;
 
 /**
  * @author banyan
@@ -15,6 +19,7 @@ import java.io.IOException;
  */
 @Slf4j
 public class HessianSerializer implements Serializer {
+
     @Override
     public byte[] serialize(Object object) {
         if (object == null) {

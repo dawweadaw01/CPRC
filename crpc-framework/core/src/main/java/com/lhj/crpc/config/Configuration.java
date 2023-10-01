@@ -23,8 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Data
 @Slf4j
 public class Configuration {
-    
-    // 配置信息-->端口号
+
+    /**
+     * 配置信息-->端口号
+     */
     private int port = 8094;
     
     // 配置信息-->应用程序的名字
@@ -58,8 +60,8 @@ public class Configuration {
         // 1、成员变量的默认配置项
         
         // todo 2、spi机制发现相关配置项
-//        SpiResolver spiResolver = new SpiResolver();
-//        spiResolver.loadFromSpi(this);
+        SpiResolver spiResolver = new SpiResolver();
+        spiResolver.loadFromSpi(this);
         
         //  3、读取xml获得上边的信息
          XmlResolver xmlResolver = new XmlResolver();
@@ -67,11 +69,4 @@ public class Configuration {
         
         // 4、编程配置项，yrpcBootstrap提供
     }
-    
-    public static void main(String[] args) {
-        Configuration configuration = new Configuration();
-    }
-
-
-    
 }

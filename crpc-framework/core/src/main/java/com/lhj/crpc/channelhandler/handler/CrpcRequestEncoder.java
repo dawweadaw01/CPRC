@@ -44,9 +44,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class CrpcRequestEncoder extends MessageToByteEncoder<CrpcRequest> {
-    
+
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, CrpcRequest  crpcRequest, ByteBuf byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, CrpcRequest crpcRequest, ByteBuf byteBuf) throws Exception {
         // 4个字节的魔数值
         byteBuf.writeBytes(MessageFormatConstant.MAGIC);
         // 1个字节的版本号
@@ -56,12 +56,12 @@ public class CrpcRequestEncoder extends MessageToByteEncoder<CrpcRequest> {
         // 总长度不清楚，不知道body的长度 writeIndex(写指针)
         byteBuf.writerIndex(byteBuf.writerIndex() + MessageFormatConstant.FULL_FIELD_LENGTH);
         // 3个类型
-        byteBuf.writeByte( crpcRequest.getRequestType());
-        byteBuf.writeByte( crpcRequest.getSerializeType());
-        byteBuf.writeByte( crpcRequest.getCompressType());
+        byteBuf.writeByte(crpcRequest.getRequestType());
+        byteBuf.writeByte(crpcRequest.getSerializeType());
+        byteBuf.writeByte(crpcRequest.getCompressType());
         // 8字节的请求id
-        byteBuf.writeLong( crpcRequest.getRequestId());
-        byteBuf.writeLong( crpcRequest.getTimeStamp());
+        byteBuf.writeLong(crpcRequest.getRequestId());
+        byteBuf.writeLong(crpcRequest.getTimeStamp());
 
 //        // 如果是心跳请求，就不处理请求体
 //        if( crpcRequest.getRequestType() == RequestType.HEART_BEAT.getId()){
@@ -74,40 +74,40 @@ public class CrpcRequestEncoder extends MessageToByteEncoder<CrpcRequest> {
 //            byteBuf.writerIndex(writerIndex);
 //            return;
 //        }
-        
+
         // 写入请求体（requestPayload）
         // 1、根据配置的序列化方式进行序列化
         // 怎么实现序列化 1、工具类 耦合性很高 如果以后我想替换序列化的方式，很难
         byte[] body = null;
-        if ( crpcRequest.getRequestPayload() != null) {
-            Serializer serializer = SerializerFactory.getSerializer( crpcRequest.getSerializeType()).getImpl();
-            body = serializer.serialize( crpcRequest.getRequestPayload());
+        if (crpcRequest.getRequestPayload() != null) {
+            Serializer serializer = SerializerFactory.getSerializer(crpcRequest.getSerializeType()).getImpl();
+            body = serializer.serialize(crpcRequest.getRequestPayload());
             // 2、根据配置的压缩方式进行压缩
-            Compressor compressor = CompressorFactory.getCompressor( crpcRequest.getCompressType()).getImpl();
+            Compressor compressor = CompressorFactory.getCompressor(crpcRequest.getCompressType()).getImpl();
             body = compressor.compress(body);
         }
-        
+
         if (body != null) {
             byteBuf.writeBytes(body);
         }
         int bodyLength = body == null ? 0 : body.length;
-        
+
         // 重新处理报文的总长度
         // 先保存当前的写指针的位置
         int writerIndex = byteBuf.writerIndex();
         // 将写指针的位置移动到总长度的位置上
         byteBuf.writerIndex(MessageFormatConstant.MAGIC.length
-            + MessageFormatConstant.VERSION_LENGTH + MessageFormatConstant.HEADER_FIELD_LENGTH
+                + MessageFormatConstant.VERSION_LENGTH + MessageFormatConstant.HEADER_FIELD_LENGTH
         );
         byteBuf.writeInt(MessageFormatConstant.HEADER_LENGTH + bodyLength);
         // 将写指针归位
         byteBuf.writerIndex(writerIndex);
-        
+
         if (log.isDebugEnabled()) {
-            log.debug("请求【{}】已经完成报文的编码。",  crpcRequest.getRequestId());
+            log.debug("请求【{}】已经完成报文的编码。", crpcRequest.getRequestId());
         }
-        
+
     }
-    
-    
+
+
 }

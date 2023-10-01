@@ -4,7 +4,7 @@ package com.lhj.crpc.core;
  * @author banyan
  * @createTime 2023-07-29
  */
-public class YrpcShutdownHook extends Thread {
+public class CrpcShutdownHook extends Thread {
     
     @Override
     public void run() {

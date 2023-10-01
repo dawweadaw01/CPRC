@@ -1,7 +1,6 @@
 package com.lhj.crpc.config;
 
 
-import com.lhj.crpc.CrpcBootstrap;
 import com.lhj.crpc.IdGenerator;
 import com.lhj.crpc.compress.Compressor;
 import com.lhj.crpc.compress.CompressorFactory;
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;

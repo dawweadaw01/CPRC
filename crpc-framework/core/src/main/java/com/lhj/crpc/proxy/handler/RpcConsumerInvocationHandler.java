@@ -38,7 +38,7 @@ public class RpcConsumerInvocationHandler implements InvocationHandler {
     // 所代理接口的实现
     private final Class<?> interfaceRef;
 
-    private String group;
+    private final String group;
 
     public RpcConsumerInvocationHandler(Class<?> interfaceRef, String group) {
         this.interfaceRef = interfaceRef;
@@ -61,11 +61,10 @@ public class RpcConsumerInvocationHandler implements InvocationHandler {
      *               appropriate primitive wrapper class, such as
      *               {@code java.lang.Integer} or {@code java.lang.Boolean}.
      * @return 返回值
-     * @throws Throwable
      */
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) {
 
         // 从接口中获取判断是否需要重试
         TryTimes tryTimesAnnotation = method.getAnnotation(TryTimes.class);

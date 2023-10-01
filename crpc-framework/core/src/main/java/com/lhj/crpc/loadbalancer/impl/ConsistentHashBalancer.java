@@ -33,9 +33,9 @@ public class ConsistentHashBalancer extends AbstractLoadBalancer {
     private static class ConsistentHashSelector implements Selector{
         
         // hash环用来存储服务器节点
-        private SortedMap<Integer,InetSocketAddress> circle= new TreeMap<>();
+        private final SortedMap<Integer,InetSocketAddress> circle= new TreeMap<>();
         // 虚拟节点的个数
-        private int virtualNodes;
+        private final int virtualNodes;
     
         public ConsistentHashSelector(List<InetSocketAddress> serviceList,int virtualNodes) {
             // 我们应该尝试将节点转化为虚拟节点，进行挂载

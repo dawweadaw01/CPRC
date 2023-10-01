@@ -146,9 +146,5 @@ public class CrpcResponseDecoder extends LengthFieldBasedFrameDecoder {
     
         return crpcResponse;
     }
-    
-    public static void main(String[] args) {
-        int i = ~(-1 << 3);
-        System.out.println(i);
-    }
+
 }

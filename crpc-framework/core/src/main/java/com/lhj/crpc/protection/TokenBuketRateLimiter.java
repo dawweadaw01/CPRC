@@ -11,19 +11,27 @@ import lombok.extern.slf4j.Slf4j;
 public class TokenBuketRateLimiter implements RateLimiter {
     // 思考，令牌是个啥？令牌桶是个啥？
     // String,Object?  list? ,map?
-    
-    // 代表令牌的数量，>0 说明有令牌，能放行，放行就减一，==0,无令牌  阻拦
+
+    /** 代表令牌的数量，>0 说明有令牌，能放行，放行就减一，==0,无令牌  阻拦
+     *
+     */
     private int tokens;
-    
-    // 限流的本质就是，令牌数
+
+    /** 限流的本质就是，令牌数
+     *
+     */
     private final int capacity;
     
     // 令牌桶的令牌，如果没了要怎么办？ 按照一定的速率给令牌桶加令牌,如每秒加500个，不能超过总数
     // 可以用定时任务去加--> 启动一个定时任务，每秒执行一次 tokens+500 不能超过 capacity （不好）
-    // 对于单机版的限流器可以有更简单的操作，每一个有请求要发送的时候给他加一下就好了
+    /** 对于单机版的限流器可以有更简单的操作，每一个有请求要发送的时候给他加一下就好了
+     *
+     */
     private final int rate;
-    
-    // 上一次放令牌的时间
+
+    /** 上一次放令牌的时间
+     *
+     */
     private Long lastTokenTime;
     
     public TokenBuketRateLimiter(int capacity, int rate) {
@@ -65,18 +73,5 @@ public class TokenBuketRateLimiter implements RateLimiter {
             return false;
         }
 
-    }
-    
-    public static void main(String[] args) {
-        TokenBuketRateLimiter rateLimiter = new TokenBuketRateLimiter(10,10);
-        for (int i = 0; i < 1000; i++) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            boolean allowRequest = rateLimiter.allowRequest();
-            System.out.println("allowRequest = " + allowRequest);
-        }
     }
 }

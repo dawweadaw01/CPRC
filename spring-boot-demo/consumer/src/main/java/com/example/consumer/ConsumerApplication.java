@@ -15,11 +15,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class ConsumerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ConsumerApplication.class, args);
+        ConfigurableApplicationContext run = SpringApplication.run(ConsumerApplication.class, args);
         // 得到上下文
-//        ControllerTest controllerTest = (ControllerTest)applicationContext.getBean("controllerTest");
-//        System.out.println(controllerTest.sayHi("hello"));
-//        System.out.println(controllerTest.sayHi2("hello"));
+        ControllerTest controllerTest = (ControllerTest)run.getBean("controllerTest");
+        System.out.println(controllerTest.sayHi("hello"));
+        System.out.println(controllerTest.sayHi2("hello"));
     }
 
 }

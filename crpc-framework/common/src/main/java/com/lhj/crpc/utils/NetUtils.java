@@ -47,10 +47,4 @@ public class NetUtils {
             throw new NetworkException(e);
         }
     }
-
-    public static void main(String[] args) {
-        String ip = NetUtils.getIp();
-        System.out.println("ip = " + ip);
-    }
-
 }

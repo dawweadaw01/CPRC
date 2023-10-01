@@ -24,18 +24,23 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SpiHandler {
     
-    // 定义一个basePath
-    private static final String BASE_PATH = "META-INF/yrpc-services";
+    /**
+     *  定义一个basePath
+    */
+     private static final String BASE_PATH = "META-INF/yrpc-services";
     
     // 先定义一个缓存，保存spi相关的原始内容
     private static final Map<String, List<String>> SPI_CONTENT = new ConcurrentHashMap<>(8);
-    
-    // 缓存的是每一个接口所对应的实现的实例
+
+    /**
+     缓存的是每一个接口所对应的实现的实例
+     *
+      */
     private static final Map<Class<?>,List<ObjectWrapper<?>>> SPI_IMPLEMENT = new ConcurrentHashMap<>(32);
     
     // 加载当前类之后需要将spi信息进行保存，避免运行时频繁执行IO
     static {
-        // todo 怎么加载当前工程和jar包中的classPath中的资源
+        //  加载当前工程和jar包中的classPath中的资源
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL fileUrl = classLoader.getResource(BASE_PATH);
         if(fileUrl != null) {
@@ -56,13 +61,12 @@ public class SpiHandler {
      * 获取第一个和当前服务相关的实例
      * @param clazz 一个服务接口的class实例
      * @return      实现类的实例
-     * @param <T>
      */
     public synchronized static <T> ObjectWrapper<T> get(Class<T> clazz) {
         
         // 1、优先走缓存
         List<ObjectWrapper<?>> objectWrappers = SPI_IMPLEMENT.get(clazz);
-        if(objectWrappers != null && objectWrappers.size() > 0){
+        if(objectWrappers != null && !objectWrappers.isEmpty()){
             return (ObjectWrapper<T>)objectWrappers.get(0);
         }
     
@@ -70,7 +74,7 @@ public class SpiHandler {
         buildCache(clazz);
     
         List<ObjectWrapper<?>>  result = SPI_IMPLEMENT.get(clazz);
-        if (result == null || result.size() == 0){
+        if (result == null || result.isEmpty()){
             return null;
         }
     
@@ -89,7 +93,7 @@ public class SpiHandler {
         
         // 1、优先走缓存
         List<ObjectWrapper<?>> objectWrappers = SPI_IMPLEMENT.get(clazz);
-        if(objectWrappers != null && objectWrappers.size() > 0){
+        if(objectWrappers != null && !objectWrappers.isEmpty()){
             return objectWrappers.stream().map( wrapper -> (ObjectWrapper<T>)wrapper )
                 .collect(Collectors.toList());
         }
@@ -99,7 +103,7 @@ public class SpiHandler {
     
         // 3、再次获取
         objectWrappers = SPI_IMPLEMENT.get(clazz);
-        if(objectWrappers != null && objectWrappers.size() > 0){
+        if(objectWrappers != null && !objectWrappers.isEmpty()){
             return objectWrappers.stream().map( wrapper -> (ObjectWrapper<T>)wrapper )
                 .collect(Collectors.toList());
         }
@@ -142,7 +146,7 @@ public class SpiHandler {
         // 1、通过clazz获取与之匹配的实现名称
         String name = clazz.getName();
         List<String> implNames = SPI_CONTENT.get(name);
-        if(implNames == null || implNames.size() == 0){
+        if(implNames == null || implNames.isEmpty()){
             return;
         }
         
@@ -172,9 +176,5 @@ public class SpiHandler {
             
         }
         SPI_IMPLEMENT.put(clazz,impls);
-    }
-    
-    public static void main(String[] args) {
-    
     }
 }
