@@ -143,7 +143,7 @@ public class CrpcBootstrap {
     /**
      * 批量发布
      *
-     * @param services 封装的需要发布的服务集合
+     * @param services 封装的需要发布的服务集合 服务集合
      * @return this当前实例
      */
     public CrpcBootstrap publish(List<ServiceConfig<?>> services) {
